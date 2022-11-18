@@ -102,6 +102,9 @@ insert into Produto (codigo_categoria, preco, nome) values
 (4, 199.99, "Chapéu Nike Unissex"),
 (5, 799.99, "New Aviator");
 
+insert into Produto (codigo_categoria, preco, nome) values 
+(1, 129.99, "Camiseta Nike Breathe Feminina");
+
 select * from Produto;
 
 -- -----------------------------------------------------
@@ -122,6 +125,10 @@ insert into Item_Pedido (qtde, codigo_pedido, codigo_produto) values
 (11, 3, 3),
 (8, 4, 4),
 (7, 5, 5);
+
+insert into Item_Pedido (qtde, codigo_pedido, codigo_produto) values 
+(2, 6, 1);
+
 
 select * from Item_Pedido;
 
@@ -158,36 +165,6 @@ WHERE c.cpf AND p.codigo AND i.codigo_produto = pro.codigo
 GROUP BY p.status = "A";
  
 -- -------------------------------------------------------------
--- Liste a maior, menor e uma média dos pedidos feita este ano.
--- -------------------------------------------------------------
--- maior
-select  max(pro.preco) as preco_total
-from Cliente c, Pedido p, 
-     Item_Pedido i, 
-	 Produto pro
-where p.codigo = c.codigo
-and i.codigo_produto = pro.codigo
-and p.data_hora between '2022-01-01' and '2022-12-31';
-
--- menor
-select min((pro.preco)) as preco_total
-from Cliente c, Pedido p, 
-     Item_Pedido i, 
-	 Produto pro
-where p.codigo = c.codigo
-and i.codigo_produto = pro.codigo
-and p.data_hora between '2022-01-01' and '2022-12-31';
-
--- media
-select avg((pro.preco)) as preco_medio
-from Cliente c, Pedido p, 
-     Item_Pedido i, 
-	 Produto pro
-where p.codigo
-and i.codigo_produto = pro.codigo
-and p.data_hora between '2022-01-01' and '2022-12-31';
-
--- -------------------------------------------------------------
 -- Liste o produto mais caro e mais barato. 
 -- -------------------------------------------------------------
 select  max(pro.preco) as preco_totalMAX, min((pro.preco)) as preco_totalMIN
@@ -222,5 +199,40 @@ FROM Categoria cat, Produto pro
 GROUP BY cat.nome;
 
 -- -------------------------------------------------------------
--- – Liste o preço médio dos produtos por categoria (nome).
+-- Lista uma contagem de pedidos de todos os clientes que 
+-- pediram mais de 5 produtos em um mesmo pedido e o preço total
+-- de seus pedidos. 
 -- -------------------------------------------------------------
+
+SELECT p.codigo, i.qtde
+FROM Cliente c, Pedido p, Item_Pedido i
+WHERE p.codigo
+AND i.qtde >= 5 ORDER BY codigo ASC;
+
+-- -------------------------------------------------------------
+-- Adicione uma coluna desconto do tipo double e não nula na 
+-- tabela produto. Coloque descontos de 0.25, 0.30 e 0.5
+-- para alguns produtos.
+-- -------------------------------------------------------------
+
+Alter table Produto add column desconto double not null;
+
+insert into () values ();
+
+-- -------------------------------------------------------------
+-- – Liste o preço dos produtos com os descontos 
+-- Valor do desconto por cada produto e igual ao preço do produto vezes (*) o valor do desconto (0.25, 0.30, etc)
+-- Preço do produto com o desconto = (preço do produto – (preço do produto * desconto)).
+-- -------------------------------------------------------------
+
+SELECT pro.nome, pro.preco, ( preco * 0.25 ) as desconto
+FROM Produto pro 
+WHERE pro.codigo = 1;
+
+SELECT pro.nome, pro.preco, ( preco * 0.30 ) as desconto
+FROM Produto pro
+WHERE pro.codigo = 1;
+
+SELECT pro.nome, pro.preco, ( preco * 0.5 ) as desconto
+FROM Produto pro
+WHERE pro.codigo = 1;

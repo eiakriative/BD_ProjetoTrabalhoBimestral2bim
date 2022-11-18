@@ -160,18 +160,26 @@ GROUP BY p.status = "A";
 -- -------------------------------------------------------------
 -- Liste a maior, menor e uma média dos pedidos feita este ano.
 -- -------------------------------------------------------------
-
 -- maior
-select  c.nome, c.cpf, max( (i.qtde * pro.preco) ) as preco_total
+select  max(pro.preco) as preco_total
 from Cliente c, Pedido p, 
      Item_Pedido i, 
 	 Produto pro
-where p.codigo
+where p.codigo = c.codigo
 and i.codigo_produto = pro.codigo
 and p.data_hora between '2022-01-01' and '2022-12-31';
 
 -- menor
-select c.nome, c.cpf, min((i.qtde * pro.preco)) as preco_total
+select min((pro.preco)) as preco_total
+from Cliente c, Pedido p, 
+     Item_Pedido i, 
+	 Produto pro
+where p.codigo = c.codigo
+and i.codigo_produto = pro.codigo
+and p.data_hora between '2022-01-01' and '2022-12-31';
+
+-- media
+select avg((pro.preco)) as preco_medio
 from Cliente c, Pedido p, 
      Item_Pedido i, 
 	 Produto pro
@@ -179,11 +187,40 @@ where p.codigo
 and i.codigo_produto = pro.codigo
 and p.data_hora between '2022-01-01' and '2022-12-31';
 
--- media
-select c.nome, c.cpf, avg((i.qtde * pro.preco)) as preco_medio
+-- -------------------------------------------------------------
+-- Liste o produto mais caro e mais barato. 
+-- -------------------------------------------------------------
+select  max(pro.preco) as preco_totalMAX, min((pro.preco)) as preco_totalMIN
 from Cliente c, Pedido p, 
      Item_Pedido i, 
 	 Produto pro
-where p.codigo
+where p.codigo = c.codigo
 and i.codigo_produto = pro.codigo
 and p.data_hora between '2022-01-01' and '2022-12-31';
+
+-- -------------------------------------------------------------
+-- Liste o preço médio dos pedidos com status = 'F'.
+-- -------------------------------------------------------------
+
+SELECT p.status, AVG(pro.preco) AS preco_media 
+FROM Produto pro, Pedido p
+WHERE p.status="F"
+GROUP BY status;
+
+-- -------------------------------------------------------------
+-- Liste os pedidos que não tenham status igual a ‘F’.
+-- -------------------------------------------------------------
+
+select * from Pedido where status not in ('F');
+
+-- -------------------------------------------------------------
+-- – Liste o preço médio dos produtos por categoria (nome).
+-- -------------------------------------------------------------
+
+SELECT cat.nome, AVG(pro.preco) AS preco_media 
+FROM Categoria cat, Produto pro
+GROUP BY cat.nome;
+
+-- -------------------------------------------------------------
+-- – Liste o preço médio dos produtos por categoria (nome).
+-- -------------------------------------------------------------

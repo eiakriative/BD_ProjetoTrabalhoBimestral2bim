@@ -156,17 +156,18 @@ WHERE data_hora between '2022-01-01' and '2024-11-20';
 -- e SUM). Ordenar por nome do cliente.
 -- -------------------------------------------------------------
 
-SELECT c.cpf, c.nome, p.codigo, 
-        p.data_hora, i.qtde, 
-		pro.preco,
-	   SUM(i.qtde * pro.preco ) as preco_total
-FROM Cliente c, Pedido p, Item_Pedido i, Produto pro
-WHERE c.cpf AND p.codigo AND i.codigo_produto = pro.codigo
-GROUP BY p.status = "A";
+SELECT c.cpf, c.nome, p.codigo, p.data_hora, SUM(pro.preco * i.qtde) as preco_total
+FROM Cliente c, Pedido p, Produto pro, Item_Pedido i
+WHERE c.codigo = p.codigo_cliente 
+AND p.codigo = i.codigo_pedido
+GROUP BY p.status = "A"
+ORDER BY c.nome;
+
  
 -- -------------------------------------------------------------
 -- Liste o produto mais caro e mais barato. 
 -- -------------------------------------------------------------
+
 select  max(pro.preco) as preco_totalMAX, min((pro.preco)) as preco_totalMIN
 from Cliente c, Pedido p, 
      Item_Pedido i, 
@@ -215,16 +216,6 @@ AND i.qtde >= 5 ORDER BY codigo ASC;
 -- para alguns produtos.
 -- -------------------------------------------------------------
 
-Alter table Produto add column desconto double not null;
-
-insert into () values ();
-
--- -------------------------------------------------------------
--- – Liste o preço dos produtos com os descontos 
--- Valor do desconto por cada produto e igual ao preço do produto vezes (*) o valor do desconto (0.25, 0.30, etc)
--- Preço do produto com o desconto = (preço do produto – (preço do produto * desconto)).
--- -------------------------------------------------------------
-
 SELECT pro.nome, pro.preco, ( preco * 0.25 ) as desconto
 FROM Produto pro 
 WHERE pro.codigo = 1;
@@ -236,3 +227,30 @@ WHERE pro.codigo = 1;
 SELECT pro.nome, pro.preco, ( preco * 0.5 ) as desconto
 FROM Produto pro
 WHERE pro.codigo = 1;
+
+-- -------------------------------------------------------------
+-- – Liste o preço dos produtos com os descontos 
+-- Valor do desconto por cada produto e igual ao preço do produto vezes (*) o valor do desconto (0.25, 0.30, etc)
+-- Preço do produto com o desconto = (preço do produto – (preço do produto * desconto)).
+-- -------------------------------------------------------------
+
+SELECT pro.nome, pro.preco, ( preco * 0.25 ) as desconto
+FROM Produto pro; 
+
+SELECT pro.nome, pro.preco, ( preco * 0.30 ) as desconto
+FROM Produto pro;
+
+SELECT pro.nome, pro.preco,  ( preco  * 0.5 ) as desconto
+FROM Produto pro;
+
+-- -------------------------------------------------------------
+-- – Liste os pedidos com o preço total já com os descontos aplicados. 
+-- -------------------------------------------------------------
+
+select pro.nome, p.data_hora, status, ( pro.preco  * 0.5 ) as preco_desconto_1, 
+( pro.preco  * 0.25 ) as preco_desconto_2, 
+( pro.preco  * 0.30 ) as preco_desconto_3 
+from Pedido p 
+inner join Produto pro on pro.codigo = p.codigo;
+
+
